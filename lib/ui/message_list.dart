@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_example/data/message_dao.dart';
 import 'package:firebase_example/data/messagemodel.dart';
+import 'package:firebase_example/data/user_dao.dart';
 import 'package:firebase_example/ui/message_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,26 +17,27 @@ class MessageList extends StatefulWidget {
 class MessageListState extends State<MessageList> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  // TODO: Add Email String
+  String? email;
 
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
-    // TODO: Add MessageDao
+
     final messageDao = Provider.of<MessageDao>(context);
 
-    // TODO: Add UserDao
-
+    final userDao = Provider.of<UserDao>(context, listen: false);
+    email = userDao.userEmail();
     return Scaffold(
       appBar: AppBar(
         title: const Text('RayChat'),
+        elevation: 0.0,
         // TODO: Replace with actions
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // TODO: Add Message DAO to _getMessageList
+            
             _getMessageList(messageDao),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -77,6 +79,7 @@ class MessageListState extends State<MessageList> {
       final message = Message(
         text: _messageController.text,
         date: DateTime.now(),
+        email: email
       );
       messageDao.saveMessage(message);
       _messageController.clear();
@@ -84,7 +87,7 @@ class MessageListState extends State<MessageList> {
     }
   }
 
-  // TODO: Replace _getMessageList
+ 
 
   Widget _getMessageList(MessageDao messageDao) {
     return Expanded(
